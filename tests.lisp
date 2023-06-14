@@ -11,7 +11,7 @@
         (string (concatenate 'string
                              "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST."
                              token))
-        (symbol (if (symbol-package token)
+        (symbol (if (eq (symbol-package token) (find-package '#:keyword))
                     (nth-value 0 (intern (concatenate 'string
                                                       "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST."
                                                       (symbol-name token))
