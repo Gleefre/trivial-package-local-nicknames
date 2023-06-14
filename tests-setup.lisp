@@ -17,7 +17,7 @@
       (delete-package #!:2)))
   (defpackage #!:1
     (:use)
-    (:local-nicknames (:l :cl) (#!#:N #!#:test)))
+    (:local-nicknames (:l :cl) (#!#:nick #!#:test)))
   (defpackage #!:2
     (:use)
     (:export "CONS")))
