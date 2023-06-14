@@ -52,6 +52,16 @@
               (assert (eq (cdr (assoc nick nicknames :test #'string=))
                           package)))))
 
+(defmacro assert-nicknamed-by-list (package-designator &rest nicknamed-by)
+  `(let ((nicknamed-by (package-locally-nicknamed-by-list (find-package ',package-designator)))
+         (needed-nicknamed-by (list ,@(loop for package-designator in nicknamed-by
+                                            collect `(find-package ',package-designator)))))
+     (assert (= (length nicknamed-by) (length needed-nicknamed-by)))
+     (loop for package in needed-nicknamed-by
+           do (assert (= 1
+                         (count package needed-nicknamed-by)
+                         (count package nicknamed-by))))))
+
 (defmacro define-test (name (&rest packages-to-cleanup) &body body)
   `(progn
      (defun ,name ()

@@ -9,24 +9,28 @@
     (:use)
     (:local-nicknames (#:nick #!#:test)))
   (assert-local-nicknames #!#:a (#:nick #!#:test))
+  (assert-nicknamed-by-list #!#:test #!#:test-1 #!#:a)
 
   ;; string as nickname
   (defpackage #!#:b
     (:use)
     (:local-nicknames ("NICK" #!#:test)))
   (assert-local-nicknames #!#:b (#:nick #!#:test))
+  (assert-nicknamed-by-list #!#:test #!#:test-1 #!#:a #!#:b)
 
   ;; character as nickname
   (defpackage #!#:c
     (:use)
     (:local-nicknames (#\N #!#:test)))
   (assert-local-nicknames #!#:c (#:n #!#:test))
+  (assert-nicknamed-by-list #!#:test #!#:test-1 #!#:a #!#:b #!#:c)
 
   ;; local nickname for global nickname
   (defpackage #!#:d
     (:use)
     (:local-nicknames (#:nick #!#:test/global-nick)))
-  (assert-local-nicknames #!#:d (#:nick #!#:test)))
+  (assert-local-nicknames #!#:d (#:nick #!#:test))
+  (assert-nicknamed-by-list #!#:test #!#:test-1 #!#:a #!#:b #!#:c #!#:d))
 
 (define-test defpackage-nonexistent-target (#!#:a #!#:b #!#:c)
   ;; should signal error of type package-error
