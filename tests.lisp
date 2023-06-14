@@ -39,6 +39,13 @@
 (defun get-tests ()
   (reverse *tests*))
 
+(defmacro errors (error-type &body body)
+  (let ((fail (gensym)))
+    `(assert (eq ',fail
+                 (handler-case
+                     (progn ,@body)
+                   (,error-type () ',fail))))))
+
 (defmacro define-test (name &body body)
   `(progn
      (defun ,name () ,@body)
@@ -119,11 +126,9 @@
 (define-test test-package-local-nicknames-nickname-collision
   (reset-test-packages)
   ;; Can't add same name twice for different global names.
-  (assert (eq :oopsie
-              (handler-case
-                  (add-package-local-nickname :l :package-local-nicknames-test-2
-                                              :package-local-nicknames-test-1)
-                (package-error () :oopsie))))
+  (errors package-error
+    (add-package-local-nickname :l :package-local-nicknames-test-2
+                                :package-local-nicknames-test-1))
   ;; ...but same name twice is OK.
   (add-package-local-nickname :l :cl :package-local-nicknames-test-1)
   (add-package-local-nickname #\L :cl :package-local-nicknames-test-1))
@@ -205,16 +210,10 @@
   (reset-test-packages)
   (progn
     (sb-ext:lock-package :package-local-nicknames-test-1)
-    (assert (eq :package-oopsie
-                (handler-case
-                    (add-package-local-nickname :c :sb-c :package-local-nicknames-test-1)
-                  (sb-ext:package-lock-violation ()
-                    :package-oopsie))))
-    (assert (eq :package-oopsie
-                (handler-case
-                    (remove-package-local-nickname :l :package-local-nicknames-test-1)
-                  (sb-ext:package-lock-violation ()
-                    :package-oopsie))))
+    (errors sb-ext:package-lock-violation
+      (add-package-local-nickname :c :sb-c :package-local-nicknames-test-1))
+    (errors sb-ext:package-lock-violation
+      (remove-package-local-nickname :l :package-local-nicknames-test-1))
     (sb-ext:unlock-package :package-local-nicknames-test-1)
     (add-package-local-nickname :c :sb-c :package-local-nicknames-test-1)
     (remove-package-local-nickname :l :package-local-nicknames-test-1)))
@@ -248,10 +247,8 @@
 (define-test test-own-name-as-local-nickname-cerror
   (with-tmp-packages ((p1 (make-package "OWN-NAME-AS-NICKNAME1"))
                       (p2 (make-package "OWN-NAME-AS-NICKNAME2")))
-    (assert (eq :oopsie
-                (handler-case
-                    (add-package-local-nickname :own-name-as-nickname1 p2 p1)
-                  (package-error () :oopsie))))
+    (errors package-error
+      (add-package-local-nickname :own-name-as-nickname1 p2 p1))
     (handler-bind ((package-error #'continue))
       (add-package-local-nickname :own-name-as-nickname1 p2 p1))))
 
@@ -280,10 +277,8 @@
   (with-tmp-packages ((p1 (make-package "OWN-NICKNAME-AS-NICKNAME1"
                                         :nicknames '("OWN-NICKNAME")))
                       (p2 (make-package "OWN-NICKNAME-AS-NICKNAME2")))
-    (assert (eq :oopsie
-                (handler-case
-                    (add-package-local-nickname :own-nickname p2 p1)
-                  (package-error () :oopsie))))
+    (errors package-error
+      (add-package-local-nickname :own-nickname p2 p1))
     (handler-bind ((package-error #'continue))
       (add-package-local-nickname :own-nickname p2 p1))))
 
