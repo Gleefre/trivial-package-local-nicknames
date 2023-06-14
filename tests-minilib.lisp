@@ -5,7 +5,9 @@
 
 (in-package #:trivial-package-local-nicknames.test)
 
-(defparameter *common-prefix* "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST.")
+(defparameter *common-prefix*
+  #-allegro "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST."
+  #+allegro "TRIVIAL-PACKAGE-LOCAL-NICKNAMES/TEST/")
 
 (defun |#!-reader| (stream subchar arg)
   (declare (ignore subchar arg))
