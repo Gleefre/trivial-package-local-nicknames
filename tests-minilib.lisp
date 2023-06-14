@@ -40,13 +40,17 @@
                      (progn ,@body)
                    (,error-type () ',fail))))))
 
-(defmacro define-test (name (&rest options) &body body)
-  (declare (ignorable options))
+(defmacro define-test (name (&rest packages-to-remove/names) &body body)
   `(progn
      (defun ,name ()
        (declare (optimize (debug 3) (safety 3) (speed 0)))
        (reset-test-packages)
-       ,@body)
+       (unwind-protect
+            (progn ,@body)
+         (reset-test-packages)
+         ,@(loop for package in packages-to-remove/names
+                 collect `(when (find-package ',package)
+                            (delete-package ',package)))))
      (add-test ',name)
      ',name))
 
@@ -63,6 +67,7 @@
             (length *tests*) (length errors))
     (null errors)))
 
+#+(or)
 (defmacro with-tmp-packages (bindings &body body)
   `(let ,(mapcar #'car bindings)
      (unwind-protect

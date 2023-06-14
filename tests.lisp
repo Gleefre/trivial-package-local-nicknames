@@ -123,33 +123,34 @@
     (add-package-local-nickname :c :sb-c #!:1)
     (remove-package-local-nickname :l #!:1)))
 
-(define-test test-delete-package-locally-nicknames-others ()
-  (with-tmp-packages ((p1 (make-package "LOCALLY-NICKNAMES-OTHERS"))
-                      (p2 (make-package "LOCALLY-NICKNAMED-BY-OTHERS")))
+(define-test test-delete-package-locally-nicknames-others ("LOCALLY-NICKNAMES-OTHERS" "LOCALLY-NICKNAMED-BY-OTHERS")
+  (let ((p1 (make-package "LOCALLY-NICKNAMES-OTHERS"))
+        (p2 (make-package "LOCALLY-NICKNAMED-BY-OTHERS")))
     (add-package-local-nickname :foo p2 p1)
     (assert (equal (list p1) (package-locally-nicknamed-by-list p2)))
     (delete-package p1)
     (assert (not (package-locally-nicknamed-by-list p2)))))
 
-(define-test test-delete-package-locally-nicknamed-by-others ()
-  (with-tmp-packages ((p1 (make-package "LOCALLY-NICKNAMES-OTHERS"))
-                      (p2 (make-package "LOCALLY-NICKNAMED-BY-OTHERS")))
+(define-test test-delete-package-locally-nicknamed-by-others ("LOCALLY-NICKNAMES-OTHERS"
+                                                              "LOCALLY-NICKNAMED-BY-OTHERS")
+  (let ((p1 (make-package "LOCALLY-NICKNAMES-OTHERS"))
+        (p2 (make-package "LOCALLY-NICKNAMED-BY-OTHERS")))
     (add-package-local-nickname :foo p2 p1)
     (assert (package-local-nicknames p1))
     (delete-package p2)
     (assert (not (package-local-nicknames p1)))))
 
-(define-test test-own-name-as-local-nickname-cerror ()
-  (with-tmp-packages ((p1 (make-package "OWN-NAME-AS-NICKNAME1"))
-                      (p2 (make-package "OWN-NAME-AS-NICKNAME2")))
+(define-test test-own-name-as-local-nickname-cerror ("OWN-NAME-AS-NICKNAME1" "OWN-NAME-AS-NICKNAME2")
+  (let ((p1 (make-package "OWN-NAME-AS-NICKNAME1"))
+        (p2 (make-package "OWN-NAME-AS-NICKNAME2")))
     (errors package-error
       (add-package-local-nickname :own-name-as-nickname1 p2 p1))
     (handler-bind ((package-error #'continue))
       (add-package-local-nickname :own-name-as-nickname1 p2 p1))))
 
-(define-test test-own-name-as-local-nickname-intern ()
-  (with-tmp-packages ((p1 (make-package "OWN-NAME-AS-NICKNAME1"))
-                      (p2 (make-package "OWN-NAME-AS-NICKNAME2")))
+(define-test test-own-name-as-local-nickname-intern ("OWN-NAME-AS-NICKNAME1" "OWN-NAME-AS-NICKNAME2")
+  (let ((p1 (make-package "OWN-NAME-AS-NICKNAME1"))
+        (p2 (make-package "OWN-NAME-AS-NICKNAME2")))
     (handler-bind ((package-error #'continue))
       (add-package-local-nickname :own-name-as-nickname1 p2 p1))
     (assert (eq (intern "FOO" p2)
@@ -168,19 +169,19 @@
                   "test-own-name-as-local-nickname-intern failed for p = ~s"
                   p))))))
 
-(define-test test-own-nickname-as-local-nickname-cerror ()
-  (with-tmp-packages ((p1 (make-package "OWN-NICKNAME-AS-NICKNAME1"
-                                        :nicknames '("OWN-NICKNAME")))
-                      (p2 (make-package "OWN-NICKNAME-AS-NICKNAME2")))
+(define-test test-own-nickname-as-local-nickname-cerror ("OWN-NICKNAME-AS-NICKNAME1" "OWN-NICKNAME-AS-NICKNAME2")
+  (let ((p1 (make-package "OWN-NICKNAME-AS-NICKNAME1"
+                          :nicknames '("OWN-NICKNAME")))
+        (p2 (make-package "OWN-NICKNAME-AS-NICKNAME2")))
     (errors package-error
       (add-package-local-nickname :own-nickname p2 p1))
     (handler-bind ((package-error #'continue))
       (add-package-local-nickname :own-nickname p2 p1))))
 
-(define-test test-own-nickname-as-local-nickname-intern ()
-  (with-tmp-packages ((p1 (make-package "OWN-NICKNAME-AS-NICKNAME1"
-                                        :nicknames '("OWN-NICKNAME")))
-                      (p2 (make-package "OWN-NICKNAME-AS-NICKNAME2")))
+(define-test test-own-nickname-as-local-nickname-intern ("OWN-NICKNAME-AS-NICKNAME1" "OWN-NICKNAME-AS-NICKNAME2")
+  (let ((p1 (make-package "OWN-NICKNAME-AS-NICKNAME1"
+                          :nicknames '("OWN-NICKNAME")))
+        (p2 (make-package "OWN-NICKNAME-AS-NICKNAME2")))
     (handler-bind ((package-error #'continue))
       (add-package-local-nickname :own-nickname p2 p1))
     (assert (eq (intern "FOO" p2)
