@@ -20,16 +20,12 @@
 
 ;;; Test data
 
+(defpackage #?T
+  (:use)
+  (:export #:x))
+
 (progn
-  (defparameter +test-data+
-    #+sbcl      '(:sb-ext    :sb :exit)
-    #+ccl       '(:ccl       :cc :quit)
-    #+ecl       '(:ext       :ex :exit)
-    #+abcl      '(:ext       :ex :quit)
-    #+clisp     '(:ext       :ex :quit)
-    #+clasp     '(:core      :ex :quit)
-    #+lispworks '(:lispworks :ex :quit)
-    #+allegro   '(:excl      :ex :exit))
+  (defparameter +test-data+ '(#?T #:t #:x))
 
   (defparameter +pkg-name+ (first +test-data+))
   (defparameter +nn-name+ (second +test-data+))
