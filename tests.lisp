@@ -6,15 +6,23 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun |#!-reader| (stream subchar arg)
     (declare (ignore subchar arg))
-    (format nil "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST.~C" (char-upcase (read-char stream t nil t))))
+    (let ((token (read stream t nil t)))
+      (etypecase token
+        (string (concatenate 'string
+                             "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST."
+                             token))
+        (symbol (if (symbol-package token)
+                    (intern (concatenate 'string
+                                         "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST."
+                                         (symbol-name token))
+                            (symbol-package token))
+                    (make-symbol (concatenate 'string
+                                              "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST."
+                                              (symbol-name token))))))))
 
- (defun |#?-reader| (stream subchar arg)
-   (make-symbol (|#!-reader| stream subchar arg)))
-
- (named-readtables:defreadtable trivial-package-lockal-nicknames.test
-   (:merge :standard)
-   (:dispatch-macro-char #\# #\! #'|#!-reader|)
-   (:dispatch-macro-char #\# #\? #'|#?-reader|)))
+  (named-readtables:defreadtable trivial-package-lockal-nicknames.test
+    (:merge :standard)
+    (:dispatch-macro-char #\# #\! #'|#!-reader|)))
 
 (named-readtables:in-readtable trivial-package-lockal-nicknames.test)
 
