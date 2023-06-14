@@ -25,9 +25,7 @@
   (:export #:x))
 
 (progn
-  (defparameter +sym-name+ '#:x)
-
-  (defparameter +sym-sname+ (string +sym-name+))
+  (defparameter +sym-sname+ "X")
   (defparameter +sym-fullname+ (concatenate 'string #!T ":" +sym-sname+))
   (defparameter +sym-fullnickname+ (concatenate 'string #!N ":" +sym-sname+))
   (defparameter +sym+ (or (find-symbol +sym-sname+ '#?T)
