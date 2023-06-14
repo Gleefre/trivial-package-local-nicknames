@@ -25,16 +25,15 @@
   (:export #:x))
 
 (progn
-  (defparameter +pkg-name+ '#?T)
   (defparameter +nn-name+ '#:t)
   (defparameter +sym-name+ '#:x)
 
-  (defparameter +pkg-sname+ (string +pkg-name+))
+  (defparameter +pkg-sname+ #!T)
   (defparameter +nn-sname+ (string +nn-name+))
   (defparameter +sym-sname+ (string +sym-name+))
   (defparameter +sym-fullname+ (concatenate 'string +pkg-sname+ ":" +sym-sname+))
   (defparameter +sym-fullnickname+ (concatenate 'string +nn-sname+ ":" +sym-sname+))
-  (defparameter +sym+ (or (find-symbol +sym-sname+ +pkg-name+)
+  (defparameter +sym+ (or (find-symbol +sym-sname+ '#?T)
                           (error "Symbol not found while loading tests: check +SYM+ binding."))))
 
 ;;; Test runner
@@ -85,7 +84,7 @@
      (delete-package #!2)))
   (eval `(defpackage #!1
            (:use)
-           (:local-nicknames (:l :cl) (,+nn-name+ ,+pkg-name+))))
+           (:local-nicknames (:l :cl) (,+nn-name+ #?T))))
   (eval `(defpackage #!2
            (:use)
            (:export "CONS"))))
@@ -122,7 +121,7 @@
           (sb (find-package +nn-name+)))
       (assert (eq cl (find-package :common-lisp)))
       (assert (eq cls (find-package :common-lisp)))
-      (assert (eq sb (find-package +pkg-name+))))))
+      (assert (eq sb (find-package '#?T))))))
 
 (define-test test-package-local-nicknames-symbol-printing
   (reset-test-packages)
@@ -168,7 +167,7 @@
       (assert (eq +sym+ exit0))
       (assert (eq +sym+ exit1))
       (assert (equal +sym-fullnickname+ (prin1-to-string exit0)))
-      (assert (eq sb (find-package +pkg-name+))))))
+      (assert (eq sb (find-package '#?T))))))
 
 (define-test test-package-local-nicknames-nickname-removal-readd-another-symbol-equality
   (reset-test-packages)
@@ -196,7 +195,7 @@
     (let ((cl (find-package :l))
           (sb (find-package +nn-name+)))
       (assert (eq cl (find-package #!2)))
-      (assert (eq sb (find-package +pkg-name+))))))
+      (assert (eq sb (find-package '#?T))))))
 
 (define-test test-package-local-nicknames-nickname-removal-readd-another-symbol-printing
   (reset-test-packages)
