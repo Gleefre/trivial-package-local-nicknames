@@ -7,15 +7,15 @@
   (defun |#!-reader| (stream subchar arg)
     (declare (ignore subchar arg))
     (let ((token (read stream t nil t)))
-      (etypecase token
+      (typecase token
         (string (concatenate 'string
                              "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST."
                              token))
         (symbol (if (symbol-package token)
-                    (intern (concatenate 'string
-                                         "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST."
-                                         (symbol-name token))
-                            (symbol-package token))
+                    (nth-value 0 (intern (concatenate 'string
+                                                      "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST."
+                                                      (symbol-name token))
+                                         (symbol-package token)))
                     (make-symbol (concatenate 'string
                                               "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST."
                                               (symbol-name token))))))))
