@@ -58,3 +58,13 @@
     (format t ";;~%;; ~D tests run, ~D failures."
             (length *tests*) (length errors))
     (null errors)))
+
+(defmacro with-tmp-packages (bindings &body body)
+  `(let ,(mapcar #'car bindings)
+     (unwind-protect
+          (progn
+            (setf ,@(apply #'append bindings))
+            ,@body)
+       ,@(mapcar (lambda (p)
+                   `(when ,p (delete-package ,p)))
+                 (mapcar #'car bindings)))))

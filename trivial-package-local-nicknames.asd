@@ -19,5 +19,6 @@
                "named-readtables")
   :serial t
   :components ((:file "tests-minilib")
+               (:file "tests-setup")
                (:file "tests"))
   :perform (asdf:test-op (op c) (uiop:symbol-call '#:trivial-package-local-nicknames.test '#:run)))
