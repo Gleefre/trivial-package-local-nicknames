@@ -6,7 +6,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun |#!-reader| (stream subchar arg)
     (declare (ignore subchar arg))
-    (format nil "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST.~C" (read-char stream t nil t)))
+    (format nil "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST.~C" (char-upcase (read-char stream t nil t))))
 
  (defun |#?-reader| (stream subchar arg)
    (make-symbol (|#!-reader| stream subchar arg)))
