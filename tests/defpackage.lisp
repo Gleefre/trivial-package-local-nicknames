@@ -53,11 +53,14 @@
                         (#:nick #!#:test/2)))))
 
 (define-test defpackage-same-target (#!#:a #!#:b)
+  ;; It is ok to have nicknames for same packages
   (defpackage #!#:a
     (:use)
     (:local-nicknames (#:nick/1 #!#:test)
                       (#:nick/2 #!#:test)))
   (assert-local-nicknames #!#:a (#:nick/1 #!#:test) (#:nick/2 #!#:test))
+
+  ;; Just big test with different nicknames in different form
   (defpackage #!#:b
     (:use)
     (:local-nicknames (#:nick/1 #!#:test)
