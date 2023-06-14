@@ -138,3 +138,50 @@
       (eval `(defpackage #!#:b
                (:use)
                (:local-nicknames (#:nick ,bad-nickname)))))))
+
+(define-test defpackage-double-execution (#!#:a #!#:b)
+  ;; Reevaluation of defpackage that is not at variance with current
+  ;; state of package that is being defined should not change that
+  ;; package.
+  (defpackage #!#:a
+    (:use)
+    (:local-nicknames (#:nick #!#:test)))
+  (assert-local-nicknames #!#:a (#:nick #!#:test))
+  (defpackage #!#:a
+    (:use)
+    (:local-nicknames (#:nick #!#:test)))
+  (assert-local-nicknames #!#:a (#:nick #!#:test))
+  (defpackage #!#:a
+    (:use)
+    (:local-nicknames ("NICK" #!#:test)))
+  (assert-local-nicknames #!#:a (#:nick #!#:test))
+  (defpackage #!#:a
+    (:use)
+    (:local-nicknames ("NICK" #!#:test)))
+  (assert-local-nicknames #!#:a (#:nick #!#:test))
+
+  ;; same as above but with character
+  (defpackage #!#:b
+    (:use)
+    (:local-nicknames (#\N #!#:test)))
+  (assert-local-nicknames #!#:b (#:n #!#:test))
+  (defpackage #!#:b
+    (:use)
+    (:local-nicknames (#\N #!#:test)))
+  (assert-local-nicknames #!#:b (#:n #!#:test))
+  (defpackage #!#:b
+    (:use)
+    (:local-nicknames ("N" #!#:test)))
+  (assert-local-nicknames #!#:b (#:n #!#:test))
+  (defpackage #!#:b
+    (:use)
+    (:local-nicknames (#:n #!#:test)))
+  (assert-local-nicknames #!#:b (#:n #!#:test))
+  (defpackage #!#:b
+    (:use)
+    (:local-nicknames ("N" #!#:test)))
+  (assert-local-nicknames #!#:b (#:n #!#:test))
+  (defpackage #!#:b
+    (:use)
+    (:local-nicknames (#:n #!#:test)))
+  (assert-local-nicknames #!#:b (#:n #!#:test)))
