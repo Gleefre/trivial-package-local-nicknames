@@ -40,7 +40,8 @@
                      (progn ,@body)
                    (,error-type () ',fail))))))
 
-(defmacro define-test (name &body body)
+(defmacro define-test (name (&rest options) &body body)
+  (declare (ignorable options))
   `(progn
      (defun ,name () ,@body)
      (add-test ',name)

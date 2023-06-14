@@ -3,7 +3,7 @@
 (in-package #:trivial-package-local-nicknames.test)
 (named-readtables:in-readtable trivial-package-lockal-nicknames.test)
 
-(define-test test-package-local-nicknames-introspection
+(define-test test-package-local-nicknames-introspection ()
   (reset-test-packages)
   (dolist (p '("KEYWORD" "COMMON-LISP" "COMMON-LISP-USER" #!:1 #!:2))
     (let ((*package* (find-package p)))
@@ -13,7 +13,7 @@
                        (assoc #!"N" alist :test 'string=)))
         (assert (eql 2 (length alist)))))))
 
-(define-test test-package-local-nicknames-symbol-equality
+(define-test test-package-local-nicknames-symbol-equality ()
   (reset-test-packages)
   (let ((*package* (find-package #!:1)))
     (let ((cons0 (read-from-string "L:CONS"))
@@ -27,7 +27,7 @@
       (assert (eq +sym+ exit0))
       (assert (eq +sym+ exit1)))))
 
-(define-test test-package-local-nicknames-package-equality
+(define-test test-package-local-nicknames-package-equality ()
   (reset-test-packages)
   (let ((*package* (find-package #!:1)))
     (let ((cl (find-package :l))
@@ -37,7 +37,7 @@
       (assert (eq cls (find-package :common-lisp)))
       (assert (eq sb (find-package '#!#:T))))))
 
-(define-test test-package-local-nicknames-symbol-printing
+(define-test test-package-local-nicknames-symbol-printing ()
   (reset-test-packages)
   (let ((*package* (find-package #!:1)))
     (let ((cons0 (read-from-string "L:CONS"))
@@ -45,7 +45,7 @@
       (assert (equal "L:CONS" (prin1-to-string cons0)))
       (assert (equal +sym-fullnickname+ (prin1-to-string exit0))))))
 
-(define-test test-package-local-nicknames-nickname-collision
+(define-test test-package-local-nicknames-nickname-collision ()
   (reset-test-packages)
   ;; Can't add same name twice for different global names.
   (errors package-error
@@ -54,7 +54,7 @@
   (add-package-local-nickname :l :cl #!:1)
   (add-package-local-nickname #\L :cl #!:1))
 
-(define-test test-package-local-nicknames-nickname-removal
+(define-test test-package-local-nicknames-nickname-removal ()
   (reset-test-packages)
   (assert (= 2 (length (package-local-nicknames #!:1))))
   (assert (remove-package-local-nickname :l #!:1))
@@ -62,7 +62,7 @@
   (let ((*package* (find-package #!:1)))
     (assert (not (find-package :l)))))
 
-(define-test test-package-local-nicknames-nickname-removal-char
+(define-test test-package-local-nicknames-nickname-removal-char ()
   (declare (optimize (debug 3) (speed 0)))
   (reset-test-packages)
   (assert (= 2 (length (package-local-nicknames #!:1))))
@@ -71,7 +71,7 @@
   (let ((*package* (find-package #!:1)))
     (assert (not (find-package :l)))))
 
-(define-test test-package-local-nicknames-nickname-removal-remaining
+(define-test test-package-local-nicknames-nickname-removal-remaining ()
   (reset-test-packages)
   (remove-package-local-nickname :l #!:1)
   (let ((*package* (find-package #!:1)))
@@ -83,7 +83,7 @@
       (assert (equal +sym-fullnickname+ (prin1-to-string exit0)))
       (assert (eq sb (find-package '#!#:T))))))
 
-(define-test test-package-local-nicknames-nickname-removal-readd-another-symbol-equality
+(define-test test-package-local-nicknames-nickname-removal-readd-another-symbol-equality ()
   (reset-test-packages)
   (assert (remove-package-local-nickname :l #!:1))
   (assert (eq (find-package #!:1)
@@ -100,7 +100,7 @@
       (assert (eq +sym+ exit0))
       (assert (eq +sym+ exit1)))))
 
-(define-test test-package-local-nicknames-nickname-removal-readd-another-package-equality
+(define-test test-package-local-nicknames-nickname-removal-readd-another-package-equality ()
   (reset-test-packages)
   (assert (remove-package-local-nickname :l #!:1))
   (assert (eq (find-package #!:1)
@@ -111,7 +111,7 @@
       (assert (eq cl (find-package #!:2)))
       (assert (eq sb (find-package '#!#:T))))))
 
-(define-test test-package-local-nicknames-nickname-removal-readd-another-symbol-printing
+(define-test test-package-local-nicknames-nickname-removal-readd-another-symbol-printing ()
   (reset-test-packages)
   (assert (remove-package-local-nickname :l #!:1))
   (assert (eq (find-package #!:1)
@@ -123,7 +123,7 @@
       (assert (equal +sym-fullnickname+ (prin1-to-string exit0))))))
 
 #+sbcl
-(define-test test-package-local-nicknames-package-locks
+(define-test test-package-local-nicknames-package-locks ()
   ;; TODO Support for other implementations with package locks.
   (reset-test-packages)
   (progn
@@ -136,7 +136,7 @@
     (add-package-local-nickname :c :sb-c #!:1)
     (remove-package-local-nickname :l #!:1)))
 
-(define-test test-delete-package-locally-nicknames-others
+(define-test test-delete-package-locally-nicknames-others ()
   (with-tmp-packages ((p1 (make-package "LOCALLY-NICKNAMES-OTHERS"))
                       (p2 (make-package "LOCALLY-NICKNAMED-BY-OTHERS")))
     (add-package-local-nickname :foo p2 p1)
@@ -144,7 +144,7 @@
     (delete-package p1)
     (assert (not (package-locally-nicknamed-by-list p2)))))
 
-(define-test test-delete-package-locally-nicknamed-by-others
+(define-test test-delete-package-locally-nicknamed-by-others ()
   (with-tmp-packages ((p1 (make-package "LOCALLY-NICKNAMES-OTHERS"))
                       (p2 (make-package "LOCALLY-NICKNAMED-BY-OTHERS")))
     (add-package-local-nickname :foo p2 p1)
@@ -152,7 +152,7 @@
     (delete-package p2)
     (assert (not (package-local-nicknames p1)))))
 
-(define-test test-own-name-as-local-nickname-cerror
+(define-test test-own-name-as-local-nickname-cerror ()
   (with-tmp-packages ((p1 (make-package "OWN-NAME-AS-NICKNAME1"))
                       (p2 (make-package "OWN-NAME-AS-NICKNAME2")))
     (errors package-error
@@ -160,7 +160,7 @@
     (handler-bind ((package-error #'continue))
       (add-package-local-nickname :own-name-as-nickname1 p2 p1))))
 
-(define-test test-own-name-as-local-nickname-intern
+(define-test test-own-name-as-local-nickname-intern ()
   (with-tmp-packages ((p1 (make-package "OWN-NAME-AS-NICKNAME1"))
                       (p2 (make-package "OWN-NAME-AS-NICKNAME2")))
     (handler-bind ((package-error #'continue))
@@ -181,7 +181,7 @@
                   "test-own-name-as-local-nickname-intern failed for p = ~s"
                   p))))))
 
-(define-test test-own-nickname-as-local-nickname-cerror
+(define-test test-own-nickname-as-local-nickname-cerror ()
   (with-tmp-packages ((p1 (make-package "OWN-NICKNAME-AS-NICKNAME1"
                                         :nicknames '("OWN-NICKNAME")))
                       (p2 (make-package "OWN-NICKNAME-AS-NICKNAME2")))
@@ -190,7 +190,7 @@
     (handler-bind ((package-error #'continue))
       (add-package-local-nickname :own-nickname p2 p1))))
 
-(define-test test-own-nickname-as-local-nickname-intern
+(define-test test-own-nickname-as-local-nickname-intern ()
   (with-tmp-packages ((p1 (make-package "OWN-NICKNAME-AS-NICKNAME1"
                                         :nicknames '("OWN-NICKNAME")))
                       (p2 (make-package "OWN-NICKNAME-AS-NICKNAME2")))
