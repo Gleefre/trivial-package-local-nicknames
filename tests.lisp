@@ -30,12 +30,12 @@
 
 (defpackage #!#:T
   (:use)
-  (:export #:x))
+  (:export #:sym))
 
 (progn
-  (defparameter +sym-fullname+ (concatenate 'string #!"T" ":" "X"))
-  (defparameter +sym-fullnickname+ (concatenate 'string #!"N" ":" "X"))
-  (defparameter +sym+ (or (find-symbol "X" '#!#:T)
+  (defparameter +sym-fullname+ (concatenate 'string #!"T" ":" "SYM"))
+  (defparameter +sym-fullnickname+ (concatenate 'string #!"N" ":" "SYM"))
+  (defparameter +sym+ (or (find-symbol "SYM" '#!#:T)
                           (error "Symbol not found while loading tests: check +SYM+ binding."))))
 
 ;;; Test runner
@@ -108,7 +108,7 @@
           (cons1 (find-symbol "CONS" :l))
           (cons1s (find-symbol "CONS" #\L))
           (exit0 (read-from-string +sym-fullname+))
-          (exit1 (find-symbol "X" '#!#:N)))
+          (exit1 (find-symbol "SYM" '#!#:N)))
       (assert (eq 'cons cons0))
       (assert (eq 'cons cons1))
       (assert (eq 'cons cons1s))
@@ -164,7 +164,7 @@
   (remove-package-local-nickname :l #!:1)
   (let ((*package* (find-package #!:1)))
     (let ((exit0 (read-from-string +sym-fullname+))
-          (exit1 (find-symbol "X" '#!#:N))
+          (exit1 (find-symbol "SYM" '#!#:N))
           (sb (find-package '#!#:N)))
       (assert (eq +sym+ exit0))
       (assert (eq +sym+ exit1))
@@ -180,7 +180,7 @@
     (let ((cons0 (read-from-string "L:CONS"))
           (cons1 (find-symbol "CONS" :l))
           (exit0 (read-from-string +sym-fullnickname+))
-          (exit1 (find-symbol "X" '#!#:N)))
+          (exit1 (find-symbol "SYM" '#!#:N)))
       (assert (eq cons0 cons1))
       (assert (not (eq 'cons cons0)))
       (assert (eq (find-symbol "CONS" #!:2)
