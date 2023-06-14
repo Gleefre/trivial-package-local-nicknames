@@ -7,9 +7,7 @@
   (:use)
   (:export #:sym))
 
-(progn
-  (defparameter +sym+ (or (find-symbol "SYM" '#!#:T)
-                          (error "Symbol not found while loading tests: check +SYM+ binding."))))
+(defconstant +sym+ (find-symbol "SYM" '#!#:T))
 
 (defun reset-test-packages ()
   (#+sbcl sb-ext:without-package-locks
