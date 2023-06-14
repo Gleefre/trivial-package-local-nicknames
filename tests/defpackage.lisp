@@ -56,6 +56,7 @@
     (:local-nicknames (#:nick #!#:test)
                       (#:nick #!#:test)))
   (assert-local-nicknames #!#:a (#:nick #!#:test))
+  (assert-nicknamed-by-list #!#:test #!#:test-1 #!#:a)
 
   ;; nicknames can be repeated in different options as well
   (defpackage #!#:b
@@ -63,6 +64,7 @@
     (:local-nicknames (#:nick #!#:test))
     (:local-nicknames (#:nick #!#:test)))
   (assert-local-nicknames #!#:b (#:nick #!#:test))
+  (assert-nicknamed-by-list #!#:test #!#:test-1 #!#:a #!#:b)
 
   ;; #:nick and "NICK" is a same nickname
   (defpackage #!#:c
@@ -70,20 +72,22 @@
     (:local-nicknames (#:nick #!#:test)
                       ("NICK" #!#:test)))
   (assert-local-nicknames #!#:c (#:nick #!#:test))
-
-  ;; same nicknames for different packages are no go
-  (errors package-error
-    (defpackage #!#:d
-      (:use)
-      (:local-nicknames (#:nick #!#:test)
-                        (#:nick #!#:test/2))))
+  (assert-nicknamed-by-list #!#:test #!#:test-1 #!#:a #!#:b #!#:c)
 
   ;; same nickname can be defined for different names of the target package
-  (defpackage #!#:e
+  (defpackage #!#:d
     (:use)
     (:local-nicknames (#:nick #!#:test)
                       (#:nick #!#:test/global-nick)))
-  (assert-local-nicknames #!#:e (#:nick #!#:test)))
+  (assert-local-nicknames #!#:d (#:nick #!#:test))
+  (assert-nicknamed-by-list #!#:test #!#:test-1 #!#:a #!#:b #!#:c #!#:d)
+
+  ;; same nicknames for different packages are no go
+  (errors package-error
+    (defpackage #!#:e
+      (:use)
+      (:local-nicknames (#:nick #!#:test)
+                        (#:nick #!#:test/2)))))
 
 (define-test defpackage-same-target (#!#:a #!#:b #!#:c)
   ;; It is ok to have nicknames for same packages
@@ -92,6 +96,7 @@
     (:local-nicknames (#:nick/1 #!#:test)
                       (#:nick/2 #!#:test)))
   (assert-local-nicknames #!#:a (#:nick/1 #!#:test) (#:nick/2 #!#:test))
+  (assert-nicknamed-by-list #!#:test #!#:test-1 #!#:a)
 
   ;; It is ok to have nicknames for same packages and its nicknames
   (defpackage #!#:b
@@ -103,6 +108,7 @@
                           (#:nick/1 #!#:test)
                           (#:nick/2 #!#:test)
                           (#:nick/3 #!#:test))
+  (assert-nicknamed-by-list #!#:test #!#:test-1 #!#:a #!#:b)
 
   ;; Just big test with different nicknames in different form
   (defpackage #!#:c
@@ -126,7 +132,8 @@
                           (#:nick/3 #!#:test)
                           (#:nick/4 #!#:test)
                           (#:nick/5 #!#:test)
-                          (#:n      #!#:test)))
+                          (#:n      #!#:test))
+  (assert-nicknamed-by-list #!#:test #!#:test-1 #!#:a #!#:b #!#:c))
 
 (define-test defpackage-shadowing-nicknames-blocklist ()
   ;; Can't shadow "CL", "COMMON-LISP" and "KEYWORD"
@@ -141,7 +148,9 @@
       ;; But can create a nickname for that package
       (eval `(defpackage #!#:b
                (:use)
-               (:local-nicknames (#:nick ,bad-nickname)))))))
+               (:local-nicknames (#:nick ,bad-nickname))))
+      (assert (= 1 (count (find-package '#!#:b)
+                          (package-locally-nicknamed-by-list bad-nickname)))))))
 
 (define-test defpackage-double-execution (#!#:a #!#:b)
   ;; Reevaluation of defpackage that is not at variance with current
@@ -151,44 +160,54 @@
     (:use)
     (:local-nicknames (#:nick #!#:test)))
   (assert-local-nicknames #!#:a (#:nick #!#:test))
+  (assert-nicknamed-by-list #!#:test #!#:test-1 #!#:a)
   (defpackage #!#:a
     (:use)
     (:local-nicknames (#:nick #!#:test)))
   (assert-local-nicknames #!#:a (#:nick #!#:test))
+  (assert-nicknamed-by-list #!#:test #!#:test-1 #!#:a)
   (defpackage #!#:a
     (:use)
     (:local-nicknames ("NICK" #!#:test)))
   (assert-local-nicknames #!#:a (#:nick #!#:test))
+  (assert-nicknamed-by-list #!#:test #!#:test-1 #!#:a)
   (defpackage #!#:a
     (:use)
     (:local-nicknames ("NICK" #!#:test)))
   (assert-local-nicknames #!#:a (#:nick #!#:test))
+  (assert-nicknamed-by-list #!#:test #!#:test-1 #!#:a)
 
   ;; same as above but with character
   (defpackage #!#:b
     (:use)
     (:local-nicknames (#\N #!#:test)))
   (assert-local-nicknames #!#:b (#:n #!#:test))
+  (assert-nicknamed-by-list #!#:test #!#:test-1 #!#:a #!#:b)
   (defpackage #!#:b
     (:use)
     (:local-nicknames (#\N #!#:test)))
   (assert-local-nicknames #!#:b (#:n #!#:test))
+  (assert-nicknamed-by-list #!#:test #!#:test-1 #!#:a #!#:b)
   (defpackage #!#:b
     (:use)
     (:local-nicknames ("N" #!#:test)))
   (assert-local-nicknames #!#:b (#:n #!#:test))
+  (assert-nicknamed-by-list #!#:test #!#:test-1 #!#:a #!#:b)
   (defpackage #!#:b
     (:use)
     (:local-nicknames (#:n #!#:test)))
   (assert-local-nicknames #!#:b (#:n #!#:test))
+  (assert-nicknamed-by-list #!#:test #!#:test-1 #!#:a #!#:b)
   (defpackage #!#:b
     (:use)
     (:local-nicknames ("N" #!#:test)))
   (assert-local-nicknames #!#:b (#:n #!#:test))
+  (assert-nicknamed-by-list #!#:test #!#:test-1 #!#:a #!#:b)
   (defpackage #!#:b
     (:use)
     (:local-nicknames (#:n #!#:test)))
-  (assert-local-nicknames #!#:b (#:n #!#:test)))
+  (assert-local-nicknames #!#:b (#:n #!#:test))
+  (assert-nicknamed-by-list #!#:test #!#:test-1 #!#:a #!#:b))
 
 (define-test defpackage-shadow-packages (#!#:a #!#:a/nick
                                          #!#:b #!#:b/nick
@@ -210,7 +229,11 @@
                           (#!#:a #!#:b)
                           (#!#:b #!#:a)
                           (#!#:a/nick #!#:b/nick)
-                          (#!#:b/nick #!#:a/nick)))
+                          (#!#:b/nick #!#:a/nick))
+  (assert-nicknamed-by-list #!#:a #!#:c)
+  (assert-nicknamed-by-list #!#:a/nick #!#:c)
+  (assert-nicknamed-by-list #!#:b #!#:c)
+  (assert-nicknamed-by-list #!#:b/nick #!#:c))
 
 ;; TODO: test for having local nicknames shadowing own nicknames
 ;; Will CDR allow them? I hope so
