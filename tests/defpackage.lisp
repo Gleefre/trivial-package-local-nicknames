@@ -22,7 +22,7 @@
     (:local-nicknames (#\N #!#:test)))
   (assert-local-nicknames #!#:c (#:n #!#:test)))
 
-(define-test defpackage-same-nick (#!#:a #!#:b #!#:c #!#:d)
+(define-test defpackage-same-nick (#!#:a #!#:b #!#:c #!#:d #!#:e)
   ;; same nickname for the same package is fine
   ;; should not be repeated in (package-local-nicknames ...) alist
   (defpackage #!#:a
@@ -50,7 +50,14 @@
     (defpackage #!#:d
       (:use)
       (:local-nicknames (#:nick #!#:test)
-                        (#:nick #!#:test/2)))))
+                        (#:nick #!#:test/2))))
+
+  ;; same nickname can be defined for different names of the target package
+  (defpackage #!#:e
+    (:use)
+    (:local-nicknames (#:nick #!#:test)
+                      (#:nick #!#:test/global-nick)))
+  (assert-local-nicknames #!#:e (#:nick #!#:test)))
 
 (define-test defpackage-same-target (#!#:a #!#:b)
   ;; It is ok to have nicknames for same packages
