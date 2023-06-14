@@ -4,9 +4,9 @@
 (named-readtables:in-readtable trivial-package-lockal-nicknames.test)
 
 (define-test test-package-local-nicknames-introspection ()
-  (dolist (p '("KEYWORD" "COMMON-LISP" "COMMON-LISP-USER" #!:1 #!:2))
+  (dolist (p '("KEYWORD" "COMMON-LISP" "COMMON-LISP-USER" #! :test-1 #! :test-2))
     (let ((*package* (find-package p)))
-      (let ((alist (package-local-nicknames #!:1)))
+      (let ((alist (package-local-nicknames #! :test-1)))
         (assert (equal (cons "L" (find-package "CL")) (assoc "L" alist :test 'string=)))
         (assert (equal (cons "NICK" (find-package #!"TEST"))
                        (assoc "NICK" alist :test 'string=)))

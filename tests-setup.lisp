@@ -15,9 +15,9 @@
       (delete-package #!:1))
     (when (find-package #!:2)
       (delete-package #!:2)))
-  (defpackage #!:1
+  (defpackage #! :test-1
     (:use)
     (:local-nicknames (:l :cl) (#:nick #!#:test)))
-  (defpackage #!:2
+  (defpackage #! :test-2
     (:use)
     (:export "CONS")))
