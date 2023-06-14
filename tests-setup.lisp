@@ -7,6 +7,10 @@
   (:use)
   (:export #:sym))
 
+(defpackage #!#:test/2
+  (:use)
+  (:export #:sym))
+
 (defconstant +sym+ (find-symbol "SYM" '#!#:test))
 
 (defun reset-test-packages ()
