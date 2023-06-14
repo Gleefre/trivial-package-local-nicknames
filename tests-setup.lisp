@@ -4,6 +4,7 @@
 (named-readtables:in-readtable trivial-package-lockal-nicknames.test)
 
 (defpackage #!#:test
+  (:nicknames #!#:test/global-nick)
   (:use)
   (:export #:sym))
 
