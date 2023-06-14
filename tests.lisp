@@ -3,6 +3,21 @@
 
 (in-package #:trivial-package-local-nicknames.test)
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun |#!-reader| (stream subchar arg)
+    (declare (ignore subchar arg))
+    (format nil "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST.~C" (read-char stream t nil t)))
+
+ (defun |#?-reader| (stream subchar arg)
+   (make-symbol (|#!-reader| stream subchar arg)))
+
+ (named-readtables:defreadtable trivial-package-lockal-nicknames.test
+   (:merge :standard)
+   (:dispatch-macro-char #\# #\! #'|#!-reader|)
+   (:dispatch-macro-char #\# #\? #'|#?-reader|)))
+
+(named-readtables:in-readtable trivial-package-lockal-nicknames.test)
+
 ;;; Test data
 
 (progn
