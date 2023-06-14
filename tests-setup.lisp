@@ -10,8 +10,7 @@
 (defconstant +sym+ (find-symbol "SYM" '#!#:T))
 
 (defun reset-test-packages ()
-  (#+sbcl sb-ext:without-package-locks
-   #-sbcl progn
+  (trivial-package-locks:without-package-locks
    (when (find-package #!:1)
      (delete-package #!:1))
    (when (find-package #!:2)
