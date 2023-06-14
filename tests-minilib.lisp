@@ -5,20 +5,16 @@
 
 (in-package #:trivial-package-local-nicknames.test)
 
+(defparameter *common-prefix* "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST.")
+
 (defun |#!-reader| (stream subchar arg)
   (declare (ignore subchar arg))
   (let ((token (read stream t nil t)))
     (typecase token
-      (string (concatenate 'string
-                           "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST."
-                           token))
-      (keyword (nth-value 0 (intern (concatenate 'string
-                                                 "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST."
-                                                 (symbol-name token))
+      (string (concatenate 'string *common-prefix* token))
+      (keyword (nth-value 0 (intern (concatenate 'string *common-prefix* (symbol-name token))
                                     (symbol-package token))))
-      (symbol (make-symbol (concatenate 'string
-                                        "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST."
-                                        (symbol-name token)))))))
+      (symbol (make-symbol (concatenate 'string *common-prefix* (symbol-name token)))))))
 
 (named-readtables:defreadtable trivial-package-lockal-nicknames.test
   (:merge :standard)
