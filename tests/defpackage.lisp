@@ -186,6 +186,28 @@
     (:local-nicknames (#:n #!#:test)))
   (assert-local-nicknames #!#:b (#:n #!#:test)))
 
+(define-test defpackage-shadow-packages (#!#:a #!#:a/nick
+                                         #!#:b #!#:b/nick
+                                         #!#:c)
+  ;; It is allowed to shadow existing packages names and their nicknames
+  (defpackage #!#:a
+    (:use)
+    (:nicknames #!#:a/nick))
+  (defpackage #!#:b
+    (:use)
+    (:nicknames #!#:b/nick))
+  (defpackage #!#:c
+    (:use)
+    (:local-nicknames (#!#:a #!#:b)
+                      (#!#:b #!#:a))
+    (:local-nicknames (#!#:a/nick #!#:b/nick)
+                      (#!#:b/nick #!#:a/nick)))
+  (assert-local-nicknames #!#:c
+                          (#!#:a #!#:b)
+                          (#!#:b #!#:a)
+                          (#!#:a/nick #!#:b/nick)
+                          (#!#:b/nick #!#:a/nick)))
+
 ;; TODO: test for having local nicknames shadowing own nicknames
 ;; Will CDR allow them? I hope so
 
