@@ -1,32 +1,7 @@
-(defpackage #:trivial-package-local-nicknames.test
-  (:use #:cl #:trivial-package-local-nicknames))
-
 (in-package #:trivial-package-local-nicknames.test)
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defun |#!-reader| (stream subchar arg)
-    (declare (ignore subchar arg))
-    (let ((token (read stream t nil t)))
-      (typecase token
-        (string (concatenate 'string
-                             "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST."
-                             token))
-        (symbol (if (eq (symbol-package token) (find-package '#:keyword))
-                    (nth-value 0 (intern (concatenate 'string
-                                                      "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST."
-                                                      (symbol-name token))
-                                         (symbol-package token)))
-                    (make-symbol (concatenate 'string
-                                              "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST."
-                                              (symbol-name token))))))))
-
-  (named-readtables:defreadtable trivial-package-lockal-nicknames.test
-    (:merge :standard)
-    (:dispatch-macro-char #\# #\! #'|#!-reader|)))
-
 (named-readtables:in-readtable trivial-package-lockal-nicknames.test)
 
-;;; Test data
+;;; Tests setup
 
 (defpackage #!#:T
   (:use)
@@ -37,45 +12,6 @@
   (defparameter +sym-fullnickname+ (concatenate 'string #!"N" ":" "SYM"))
   (defparameter +sym+ (or (find-symbol "SYM" '#!#:T)
                           (error "Symbol not found while loading tests: check +SYM+ binding."))))
-
-;;; Test runner
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defvar *tests* '()))
-
-(defun add-test (function)
-  (pushnew function *tests*))
-
-(defun get-tests ()
-  (reverse *tests*))
-
-(defmacro errors (error-type &body body)
-  (let ((fail (gensym)))
-    `(assert (eq ',fail
-                 (handler-case
-                     (progn ,@body)
-                   (,error-type () ',fail))))))
-
-(defmacro define-test (name &body body)
-  `(progn
-     (defun ,name () ,@body)
-     (add-test ',name)
-     ',name))
-
-(defun run (&optional (ignore-errors t))
-  (let ((errors '()))
-    (dolist (test (get-tests))
-      (if ignore-errors
-          (handler-case (funcall test)
-            (error (e)
-              (format t ";; ~A:~%;;;; ~A~%" test e)
-              (push e errors)))
-          (funcall test)))
-    (format t ";;~%;; ~D tests run, ~D failures."
-            (length *tests*) (length errors))
-    (null errors)))
-
-;;; Test code
 
 (defun reset-test-packages ()
   (#+sbcl sb-ext:without-package-locks
@@ -90,6 +26,8 @@
   (defpackage #!:2
     (:use)
     (:export "CONS")))
+
+;;; Tests
 
 (define-test test-package-local-nicknames-introspection
   (reset-test-packages)
