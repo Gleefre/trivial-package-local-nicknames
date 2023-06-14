@@ -3,7 +3,7 @@
 (in-package #:trivial-package-local-nicknames.test)
 (named-readtables:in-readtable trivial-package-lockal-nicknames.test)
 
-(define-test defpackage-one (#!#:a #!#:b #!#:c)
+(define-test defpackage-one (#!#:a #!#:b #!#:c #!#:d)
   ;; uninterned symbol as nickname
   (defpackage #!#:a
     (:use)
@@ -20,7 +20,13 @@
   (defpackage #!#:c
     (:use)
     (:local-nicknames (#\N #!#:test)))
-  (assert-local-nicknames #!#:c (#:n #!#:test)))
+  (assert-local-nicknames #!#:c (#:n #!#:test))
+
+  ;; local nickname for global nickname
+  (defpackage #!#:d
+    (:use)
+    (:local-nicknames (#:nick #!#:test/global-nick)))
+  (assert-local-nicknames #!#:d (#:nick #!#:test)))
 
 (define-test defpackage-same-nick (#!#:a #!#:b #!#:c #!#:d #!#:e)
   ;; same nickname for the same package is fine
