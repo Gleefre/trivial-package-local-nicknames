@@ -33,8 +33,8 @@
   (:export #:x))
 
 (progn
-  (defparameter +sym-fullname+ (concatenate 'string #!T ":" "X"))
-  (defparameter +sym-fullnickname+ (concatenate 'string #!N ":" "X"))
+  (defparameter +sym-fullname+ (concatenate 'string #!"T" ":" "X"))
+  (defparameter +sym-fullnickname+ (concatenate 'string #!"N" ":" "X"))
   (defparameter +sym+ (or (find-symbol "X" '#?T)
                           (error "Symbol not found while loading tests: check +SYM+ binding."))))
 
@@ -80,30 +80,30 @@
 (defun reset-test-packages ()
   (#+sbcl sb-ext:without-package-locks
    #-sbcl progn
-   (when (find-package #!1)
-     (delete-package #!1))
-   (when (find-package #!2)
-     (delete-package #!2)))
-  (defpackage #!1
+   (when (find-package #!:1)
+     (delete-package #!:1))
+   (when (find-package #!:2)
+     (delete-package #!:2)))
+  (defpackage #!:1
     (:use)
     (:local-nicknames (:l :cl) (#?N #?T)))
-  (defpackage #!2
+  (defpackage #!:2
     (:use)
     (:export "CONS")))
 
 (define-test test-package-local-nicknames-introspection
   (reset-test-packages)
-  (dolist (p '("KEYWORD" "COMMON-LISP" "COMMON-LISP-USER" #!1 #!2))
+  (dolist (p '("KEYWORD" "COMMON-LISP" "COMMON-LISP-USER" #!:1 #!:2))
     (let ((*package* (find-package p)))
-      (let ((alist (package-local-nicknames #!1)))
+      (let ((alist (package-local-nicknames #!:1)))
         (assert (equal (cons "L" (find-package "CL")) (assoc "L" alist :test 'string=)))
-        (assert (equal (cons #!N (find-package #!T))
-                       (assoc #!N alist :test 'string=)))
+        (assert (equal (cons #!"N" (find-package #!"T"))
+                       (assoc #!"N" alist :test 'string=)))
         (assert (eql 2 (length alist)))))))
 
 (define-test test-package-local-nicknames-symbol-equality
   (reset-test-packages)
-  (let ((*package* (find-package #!1)))
+  (let ((*package* (find-package #!:1)))
     (let ((cons0 (read-from-string "L:CONS"))
           (cons1 (find-symbol "CONS" :l))
           (cons1s (find-symbol "CONS" #\L))
@@ -117,7 +117,7 @@
 
 (define-test test-package-local-nicknames-package-equality
   (reset-test-packages)
-  (let ((*package* (find-package #!1)))
+  (let ((*package* (find-package #!:1)))
     (let ((cl (find-package :l))
           (cls (find-package #\L))
           (sb (find-package '#?N)))
@@ -127,7 +127,7 @@
 
 (define-test test-package-local-nicknames-symbol-printing
   (reset-test-packages)
-  (let ((*package* (find-package #!1)))
+  (let ((*package* (find-package #!:1)))
     (let ((cons0 (read-from-string "L:CONS"))
           (exit0 (read-from-string +sym-fullname+)))
       (assert (equal "L:CONS" (prin1-to-string cons0)))
@@ -137,32 +137,32 @@
   (reset-test-packages)
   ;; Can't add same name twice for different global names.
   (errors package-error
-    (add-package-local-nickname :l #!2 #!1))
+    (add-package-local-nickname :l #!:2 #!:1))
   ;; ...but same name twice is OK.
-  (add-package-local-nickname :l :cl #!1)
-  (add-package-local-nickname #\L :cl #!1))
+  (add-package-local-nickname :l :cl #!:1)
+  (add-package-local-nickname #\L :cl #!:1))
 
 (define-test test-package-local-nicknames-nickname-removal
   (reset-test-packages)
-  (assert (= 2 (length (package-local-nicknames #!1))))
-  (assert (remove-package-local-nickname :l #!1))
-  (assert (= 1 (length (package-local-nicknames #!1))))
-  (let ((*package* (find-package #!1)))
+  (assert (= 2 (length (package-local-nicknames #!:1))))
+  (assert (remove-package-local-nickname :l #!:1))
+  (assert (= 1 (length (package-local-nicknames #!:1))))
+  (let ((*package* (find-package #!:1)))
     (assert (not (find-package :l)))))
 
 (define-test test-package-local-nicknames-nickname-removal-char
   (declare (optimize (debug 3) (speed 0)))
   (reset-test-packages)
-  (assert (= 2 (length (package-local-nicknames #!1))))
-  (assert (remove-package-local-nickname #\L #!1))
-  (assert (= 1 (length (package-local-nicknames #!1))))
-  (let ((*package* (find-package #!1)))
+  (assert (= 2 (length (package-local-nicknames #!:1))))
+  (assert (remove-package-local-nickname #\L #!:1))
+  (assert (= 1 (length (package-local-nicknames #!:1))))
+  (let ((*package* (find-package #!:1)))
     (assert (not (find-package :l)))))
 
 (define-test test-package-local-nicknames-nickname-removal-remaining
   (reset-test-packages)
-  (remove-package-local-nickname :l #!1)
-  (let ((*package* (find-package #!1)))
+  (remove-package-local-nickname :l #!:1)
+  (let ((*package* (find-package #!:1)))
     (let ((exit0 (read-from-string +sym-fullname+))
           (exit1 (find-symbol "X" '#?N))
           (sb (find-package '#?N)))
@@ -173,38 +173,38 @@
 
 (define-test test-package-local-nicknames-nickname-removal-readd-another-symbol-equality
   (reset-test-packages)
-  (assert (remove-package-local-nickname :l #!1))
-  (assert (eq (find-package #!1)
-              (add-package-local-nickname :l #!2 #!1)))
-  (let ((*package* (find-package #!1)))
+  (assert (remove-package-local-nickname :l #!:1))
+  (assert (eq (find-package #!:1)
+              (add-package-local-nickname :l #!:2 #!:1)))
+  (let ((*package* (find-package #!:1)))
     (let ((cons0 (read-from-string "L:CONS"))
           (cons1 (find-symbol "CONS" :l))
           (exit0 (read-from-string +sym-fullnickname+))
           (exit1 (find-symbol "X" '#?N)))
       (assert (eq cons0 cons1))
       (assert (not (eq 'cons cons0)))
-      (assert (eq (find-symbol "CONS" #!2)
+      (assert (eq (find-symbol "CONS" #!:2)
                   cons0))
       (assert (eq +sym+ exit0))
       (assert (eq +sym+ exit1)))))
 
 (define-test test-package-local-nicknames-nickname-removal-readd-another-package-equality
   (reset-test-packages)
-  (assert (remove-package-local-nickname :l #!1))
-  (assert (eq (find-package #!1)
-              (add-package-local-nickname :l #!2 #!1)))
-  (let ((*package* (find-package #!1)))
+  (assert (remove-package-local-nickname :l #!:1))
+  (assert (eq (find-package #!:1)
+              (add-package-local-nickname :l #!:2 #!:1)))
+  (let ((*package* (find-package #!:1)))
     (let ((cl (find-package :l))
           (sb (find-package '#?N)))
-      (assert (eq cl (find-package #!2)))
+      (assert (eq cl (find-package #!:2)))
       (assert (eq sb (find-package '#?T))))))
 
 (define-test test-package-local-nicknames-nickname-removal-readd-another-symbol-printing
   (reset-test-packages)
-  (assert (remove-package-local-nickname :l #!1))
-  (assert (eq (find-package #!1)
-              (add-package-local-nickname :l #!2 #!1)))
-  (let ((*package* (find-package #!1)))
+  (assert (remove-package-local-nickname :l #!:1))
+  (assert (eq (find-package #!:1)
+              (add-package-local-nickname :l #!:2 #!:1)))
+  (let ((*package* (find-package #!:1)))
     (let ((cons0 (read-from-string "L:CONS"))
           (exit0 (read-from-string +sym-fullnickname+)))
       (assert (equal "L:CONS" (prin1-to-string cons0)))
@@ -215,14 +215,14 @@
   ;; TODO Support for other implementations with package locks.
   (reset-test-packages)
   (progn
-    (sb-ext:lock-package #!1)
+    (sb-ext:lock-package #!:1)
     (errors sb-ext:package-lock-violation
-      (add-package-local-nickname :c :sb-c #!1))
+      (add-package-local-nickname :c :sb-c #!:1))
     (errors sb-ext:package-lock-violation
-      (remove-package-local-nickname :l #!1))
-    (sb-ext:unlock-package #!1)
-    (add-package-local-nickname :c :sb-c #!1)
-    (remove-package-local-nickname :l #!1)))
+      (remove-package-local-nickname :l #!:1))
+    (sb-ext:unlock-package #!:1)
+    (add-package-local-nickname :c :sb-c #!:1)
+    (remove-package-local-nickname :l #!:1)))
 
 (defmacro with-tmp-packages (bindings &body body)
   `(let ,(mapcar #'car bindings)
