@@ -8,6 +8,6 @@
     (let ((*package* (find-package p)))
       (let ((alist (package-local-nicknames #!:1)))
         (assert (equal (cons "L" (find-package "CL")) (assoc "L" alist :test 'string=)))
-        (assert (equal (cons #!"N" (find-package #!"T"))
+        (assert (equal (cons #!"N" (find-package #!"TEST"))
                        (assoc #!"N" alist :test 'string=)))
         (assert (eql 2 (length alist)))))))
