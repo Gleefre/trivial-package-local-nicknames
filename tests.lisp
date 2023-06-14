@@ -25,10 +25,9 @@
   (:export #:x))
 
 (progn
-  (defparameter +nn-name+ '#?N)
   (defparameter +sym-name+ '#:x)
 
-  (defparameter +nn-sname+ (string +nn-name+))
+  (defparameter +nn-sname+ #!N)
   (defparameter +sym-sname+ (string +sym-name+))
   (defparameter +sym-fullname+ (concatenate 'string #!T ":" +sym-sname+))
   (defparameter +sym-fullnickname+ (concatenate 'string +nn-sname+ ":" +sym-sname+))
@@ -83,7 +82,7 @@
      (delete-package #!2)))
   (eval `(defpackage #!1
            (:use)
-           (:local-nicknames (:l :cl) (,+nn-name+ #?T))))
+           (:local-nicknames (:l :cl) (#?N #?T))))
   (eval `(defpackage #!2
            (:use)
            (:export "CONS"))))
@@ -105,7 +104,7 @@
           (cons1 (find-symbol "CONS" :l))
           (cons1s (find-symbol "CONS" #\L))
           (exit0 (read-from-string +sym-fullname+))
-          (exit1 (find-symbol +sym-sname+ +nn-name+)))
+          (exit1 (find-symbol +sym-sname+ '#?N)))
       (assert (eq 'cons cons0))
       (assert (eq 'cons cons1))
       (assert (eq 'cons cons1s))
@@ -117,7 +116,7 @@
   (let ((*package* (find-package #!1)))
     (let ((cl (find-package :l))
           (cls (find-package #\L))
-          (sb (find-package +nn-name+)))
+          (sb (find-package '#?N)))
       (assert (eq cl (find-package :common-lisp)))
       (assert (eq cls (find-package :common-lisp)))
       (assert (eq sb (find-package '#?T))))))
@@ -161,8 +160,8 @@
   (remove-package-local-nickname :l #!1)
   (let ((*package* (find-package #!1)))
     (let ((exit0 (read-from-string +sym-fullname+))
-          (exit1 (find-symbol +sym-sname+ +nn-name+))
-          (sb (find-package +nn-name+)))
+          (exit1 (find-symbol +sym-sname+ '#?N))
+          (sb (find-package '#?N)))
       (assert (eq +sym+ exit0))
       (assert (eq +sym+ exit1))
       (assert (equal +sym-fullnickname+ (prin1-to-string exit0)))
@@ -177,7 +176,7 @@
     (let ((cons0 (read-from-string "L:CONS"))
           (cons1 (find-symbol "CONS" :l))
           (exit0 (read-from-string +sym-fullnickname+))
-          (exit1 (find-symbol +sym-sname+ +nn-name+)))
+          (exit1 (find-symbol +sym-sname+ '#?N)))
       (assert (eq cons0 cons1))
       (assert (not (eq 'cons cons0)))
       (assert (eq (find-symbol "CONS" #!2)
@@ -192,7 +191,7 @@
               (add-package-local-nickname :l #!2 #!1)))
   (let ((*package* (find-package #!1)))
     (let ((cl (find-package :l))
-          (sb (find-package +nn-name+)))
+          (sb (find-package '#?N)))
       (assert (eq cl (find-package #!2)))
       (assert (eq sb (find-package '#?T))))))
 
