@@ -185,3 +185,9 @@
     (:use)
     (:local-nicknames (#:n #!#:test)))
   (assert-local-nicknames #!#:b (#:n #!#:test)))
+
+;; TODO: test for having local nicknames shadowing own nicknames
+;; Will CDR allow them? I hope so
+
+;; TODO: test for local nicknames not affecting defpackage
+;; Will they? Idk
