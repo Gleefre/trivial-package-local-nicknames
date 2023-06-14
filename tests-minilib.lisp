@@ -40,6 +40,21 @@
                      (progn ,@body)
                    (,error-type () ',fail))))))
 
+(defmacro assert-local-nicknames (package-designator &rest local-nicknames)
+  `(let ((nicknames (package-local-nicknames (find-package ',package-designator)))
+         (needed-nicknames (list ,@(loop for (nick package-designator) in local-nicknames
+                                         collect `(cons ,(string nick) (find-package ',package-designator))))))
+     (assert (= (length nicknames) ,(length local-nicknames)))
+     (loop for (nick . package) in nicknames
+           do (check-type nick string)
+              (check-type package package))
+     (loop for (nick . package) in needed-nicknames
+           do (assert (= 1
+                         (count nick nicknames :key #'car :test #'string=)
+                         (count nick needed-nicknames :key #'car :test #'string=)))
+              (assert (eq (cdr (assoc nick nicknames :test #'string=))
+                          package)))))
+
 (defmacro define-test (name (&rest packages-to-remove/names) &body body)
   `(progn
      (defun ,name ()
