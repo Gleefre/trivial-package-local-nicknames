@@ -22,6 +22,5 @@
                (:file "tests-setup")
                (:module "tests"
                 :components ((:file "defpackage")
-                             (:file "introspection")
                              (:file "tests"))))
   :perform (asdf:test-op (op c) (uiop:symbol-call '#:trivial-package-local-nicknames.test '#:run)))
