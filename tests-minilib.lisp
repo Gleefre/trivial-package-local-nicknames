@@ -21,9 +21,9 @@
                                               "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST."
                                               (symbol-name token))))))))
 
-  (named-readtables:defreadtable trivial-package-lockal-nicknames.test
-    (:merge :standard)
-    (:dispatch-macro-char #\# #\! #'|#!-reader|))
+(named-readtables:defreadtable trivial-package-lockal-nicknames.test
+  (:merge :standard)
+  (:dispatch-macro-char #\# #\! #'|#!-reader|))
 
 (defparameter *tests* ())
 
