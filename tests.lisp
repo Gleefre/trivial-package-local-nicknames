@@ -80,12 +80,12 @@
      (delete-package #!1))
    (when (find-package #!2)
      (delete-package #!2)))
-  (eval `(defpackage #!1
-           (:use)
-           (:local-nicknames (:l :cl) (#?N #?T))))
-  (eval `(defpackage #!2
-           (:use)
-           (:export "CONS"))))
+  (defpackage #!1
+    (:use)
+    (:local-nicknames (:l :cl) (#?N #?T)))
+  (defpackage #!2
+    (:use)
+    (:export "CONS")))
 
 (define-test test-package-local-nicknames-introspection
   (reset-test-packages)
