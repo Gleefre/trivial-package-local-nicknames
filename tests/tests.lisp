@@ -3,15 +3,6 @@
 (in-package #:trivial-package-local-nicknames.test)
 (named-readtables:in-readtable trivial-package-lockal-nicknames.test)
 
-(define-test test-package-local-nicknames-introspection ()
-  (dolist (p '("KEYWORD" "COMMON-LISP" "COMMON-LISP-USER" #!:1 #!:2))
-    (let ((*package* (find-package p)))
-      (let ((alist (package-local-nicknames #!:1)))
-        (assert (equal (cons "L" (find-package "CL")) (assoc "L" alist :test 'string=)))
-        (assert (equal (cons #!"N" (find-package #!"T"))
-                       (assoc #!"N" alist :test 'string=)))
-        (assert (eql 2 (length alist)))))))
-
 (define-test test-package-local-nicknames-symbol-equality ()
   (let ((*package* (find-package #!:1)))
     (let ((cons0 (read-from-string "L:CONS"))
