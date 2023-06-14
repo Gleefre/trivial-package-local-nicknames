@@ -28,14 +28,14 @@
 
 ;;; Test data
 
-(defpackage #?T
+(defpackage #!#:T
   (:use)
   (:export #:x))
 
 (progn
   (defparameter +sym-fullname+ (concatenate 'string #!"T" ":" "X"))
   (defparameter +sym-fullnickname+ (concatenate 'string #!"N" ":" "X"))
-  (defparameter +sym+ (or (find-symbol "X" '#?T)
+  (defparameter +sym+ (or (find-symbol "X" '#!#:T)
                           (error "Symbol not found while loading tests: check +SYM+ binding."))))
 
 ;;; Test runner
@@ -86,7 +86,7 @@
      (delete-package #!:2)))
   (defpackage #!:1
     (:use)
-    (:local-nicknames (:l :cl) (#?N #?T)))
+    (:local-nicknames (:l :cl) (#!#:N #!#:T)))
   (defpackage #!:2
     (:use)
     (:export "CONS")))
@@ -108,7 +108,7 @@
           (cons1 (find-symbol "CONS" :l))
           (cons1s (find-symbol "CONS" #\L))
           (exit0 (read-from-string +sym-fullname+))
-          (exit1 (find-symbol "X" '#?N)))
+          (exit1 (find-symbol "X" '#!#:N)))
       (assert (eq 'cons cons0))
       (assert (eq 'cons cons1))
       (assert (eq 'cons cons1s))
@@ -120,10 +120,10 @@
   (let ((*package* (find-package #!:1)))
     (let ((cl (find-package :l))
           (cls (find-package #\L))
-          (sb (find-package '#?N)))
+          (sb (find-package '#!#:N)))
       (assert (eq cl (find-package :common-lisp)))
       (assert (eq cls (find-package :common-lisp)))
-      (assert (eq sb (find-package '#?T))))))
+      (assert (eq sb (find-package '#!#:T))))))
 
 (define-test test-package-local-nicknames-symbol-printing
   (reset-test-packages)
@@ -164,12 +164,12 @@
   (remove-package-local-nickname :l #!:1)
   (let ((*package* (find-package #!:1)))
     (let ((exit0 (read-from-string +sym-fullname+))
-          (exit1 (find-symbol "X" '#?N))
-          (sb (find-package '#?N)))
+          (exit1 (find-symbol "X" '#!#:N))
+          (sb (find-package '#!#:N)))
       (assert (eq +sym+ exit0))
       (assert (eq +sym+ exit1))
       (assert (equal +sym-fullnickname+ (prin1-to-string exit0)))
-      (assert (eq sb (find-package '#?T))))))
+      (assert (eq sb (find-package '#!#:T))))))
 
 (define-test test-package-local-nicknames-nickname-removal-readd-another-symbol-equality
   (reset-test-packages)
@@ -180,7 +180,7 @@
     (let ((cons0 (read-from-string "L:CONS"))
           (cons1 (find-symbol "CONS" :l))
           (exit0 (read-from-string +sym-fullnickname+))
-          (exit1 (find-symbol "X" '#?N)))
+          (exit1 (find-symbol "X" '#!#:N)))
       (assert (eq cons0 cons1))
       (assert (not (eq 'cons cons0)))
       (assert (eq (find-symbol "CONS" #!:2)
@@ -195,9 +195,9 @@
               (add-package-local-nickname :l #!:2 #!:1)))
   (let ((*package* (find-package #!:1)))
     (let ((cl (find-package :l))
-          (sb (find-package '#?N)))
+          (sb (find-package '#!#:N)))
       (assert (eq cl (find-package #!:2)))
-      (assert (eq sb (find-package '#?T))))))
+      (assert (eq sb (find-package '#!#:T))))))
 
 (define-test test-package-local-nicknames-nickname-removal-readd-another-symbol-printing
   (reset-test-packages)
