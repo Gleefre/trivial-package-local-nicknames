@@ -8,7 +8,6 @@
   (:export #:sym))
 
 (progn
-  (defparameter +sym-fullname+ (concatenate 'string #!"T" ":" "SYM"))
   (defparameter +sym-fullnickname+ (concatenate 'string #!"N" ":" "SYM"))
   (defparameter +sym+ (or (find-symbol "SYM" '#!#:T)
                           (error "Symbol not found while loading tests: check +SYM+ binding."))))
