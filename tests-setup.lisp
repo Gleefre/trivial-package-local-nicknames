@@ -11,10 +11,10 @@
 
 (defun reset-test-packages ()
   (trivial-package-locks:without-package-locks
-   (when (find-package #!:1)
-     (delete-package #!:1))
-   (when (find-package #!:2)
-     (delete-package #!:2)))
+    (when (find-package #!:1)
+      (delete-package #!:1))
+    (when (find-package #!:2)
+      (delete-package #!:2)))
   (defpackage #!:1
     (:use)
     (:local-nicknames (:l :cl) (#!#:N #!#:T)))
