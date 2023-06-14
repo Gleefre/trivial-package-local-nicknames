@@ -30,7 +30,7 @@
     (let ((cons0 (read-from-string "L:CONS"))
           (exit0 (read-from-string #!"T:SYM")))
       (assert (equal "L:CONS" (prin1-to-string cons0)))
-      (assert (equal +sym-fullnickname+ (prin1-to-string exit0))))))
+      (assert (equal #!"N:SYM" (prin1-to-string exit0))))))
 
 (define-test test-package-local-nicknames-nickname-collision ()
   ;; Can't add same name twice for different global names.
@@ -62,7 +62,7 @@
           (sb (find-package '#!#:N)))
       (assert (eq +sym+ exit0))
       (assert (eq +sym+ exit1))
-      (assert (equal +sym-fullnickname+ (prin1-to-string exit0)))
+      (assert (equal #!"N:SYM" (prin1-to-string exit0)))
       (assert (eq sb (find-package '#!#:T))))))
 
 (define-test test-package-local-nicknames-nickname-removal-readd-another-symbol-equality ()
@@ -72,7 +72,7 @@
   (let ((*package* (find-package #!:1)))
     (let ((cons0 (read-from-string "L:CONS"))
           (cons1 (find-symbol "CONS" :l))
-          (exit0 (read-from-string +sym-fullnickname+))
+          (exit0 (read-from-string #!"N:SYM"))
           (exit1 (find-symbol "SYM" '#!#:N)))
       (assert (eq cons0 cons1))
       (assert (not (eq 'cons cons0)))
@@ -97,9 +97,9 @@
               (add-package-local-nickname :l #!:2 #!:1)))
   (let ((*package* (find-package #!:1)))
     (let ((cons0 (read-from-string "L:CONS"))
-          (exit0 (read-from-string +sym-fullnickname+)))
+          (exit0 (read-from-string #!"N:SYM")))
       (assert (equal "L:CONS" (prin1-to-string cons0)))
-      (assert (equal +sym-fullnickname+ (prin1-to-string exit0))))))
+      (assert (equal #!"N:SYM" (prin1-to-string exit0))))))
 
 #+sbcl
 (define-test test-package-local-nicknames-package-locks ()
