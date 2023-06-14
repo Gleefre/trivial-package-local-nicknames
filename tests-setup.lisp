@@ -20,3 +20,5 @@
     (:use)
     (:export "CONS"))
   (defparameter +sym+ (find-symbol "SYM" '#!#:test)))
+
+(reset-test-packages)
