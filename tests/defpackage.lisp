@@ -90,3 +90,18 @@
                           (#:nick/4 #!#:test)
                           (#:nick/5 #!#:test)
                           (#:n      #!#:test)))
+
+(define-test defpackage-shadowing-nicknames-blocklist ()
+  ;; Can't shadow "CL", "COMMON-LISP" and "KEYWORD"
+  (dolist (bad-nickname '("CL" "COMMON-LISP" "KEYWORD"
+                          #:cl #:common-lisp #:keyword
+                          :cl  :common-lisp  :keyword))
+    (with-packages-cleanup (#!#:a #!#:b)
+      (errors package-error
+        (eval `(defpackage #!#:a
+                 (:use)
+                 (:local-nicknames (,bad-nickname #!#:test)))))
+      ;; But can create a nickname for that package
+      (eval `(defpackage #!#:b
+               (:use)
+               (:local-nicknames (#:nick ,bad-nickname)))))))
