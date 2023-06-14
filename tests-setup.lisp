@@ -3,26 +3,20 @@
 (in-package #:trivial-package-local-nicknames.test)
 (named-readtables:in-readtable trivial-package-lockal-nicknames.test)
 
-(defpackage #!#:test
-  (:nicknames #!#:test/global-nick)
-  (:use)
-  (:export #:sym))
-
-(defpackage #!#:test/2
-  (:use)
-  (:export #:sym))
-
-(defconstant +sym+ (find-symbol "SYM" '#!#:test))
-
 (defun reset-test-packages ()
   (trivial-package-locks:without-package-locks
-    (when (find-package #!:1)
-      (delete-package #!:1))
-    (when (find-package #!:2)
-      (delete-package #!:2)))
-  (defpackage #! :test-1
+    (with-packages-cleanup (#!#:test #!#:test-1 #!#:test/2 #!#:test-2)))
+  (defpackage #!#:test
     (:use)
-    (:local-nicknames (:l :cl) (#:nick #!#:test)))
-  (defpackage #! :test-2
+    (:nicknames #!#:test/global-nick)
+    (:export #:sym))
+  (defpackage #!#:test/2
     (:use)
-    (:export "CONS")))
+    (:export #:sym))
+  (defpackage #!#:test-1
+    (:use)
+    (:local-nicknames (#:l #:cl) (#:nick #!#:test)))
+  (defpackage #!#:test-2
+    (:use)
+    (:export "CONS"))
+  (defparameter +sym+ (find-symbol "SYM" '#!#:test)))
