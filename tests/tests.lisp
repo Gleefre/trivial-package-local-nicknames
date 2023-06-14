@@ -101,17 +101,17 @@
       (assert (equal "L:CONS" (prin1-to-string cons0)))
       (assert (equal #!"N:SYM" (prin1-to-string exit0))))))
 
-#+sbcl
+#+package-locks
 (define-test test-package-local-nicknames-package-locks ()
   ;; TODO Support for other implementations with package locks.
   (progn
-    (sb-ext:lock-package #!:1)
-    (errors sb-ext:package-lock-violation
-      (add-package-local-nickname :c :sb-c #!:1))
-    (errors sb-ext:package-lock-violation
+    (setf (trivial-package-locks:package-locked-p #!:1) t)
+    (errors #+sbcl sb-ext:package-lock-violation #-sbcl error
+      (add-package-local-nickname :c #!:2 #!:1))
+    (errors #+sbcl sb-ext:package-lock-violation #-sbcl error
       (remove-package-local-nickname :l #!:1))
-    (sb-ext:unlock-package #!:1)
-    (add-package-local-nickname :c :sb-c #!:1)
+    (setf (trivial-package-locks:package-locked-p #!:1) nil)
+    (add-package-local-nickname :c #!:2 #!:1)
     (remove-package-local-nickname :l #!:1)))
 
 (define-test test-delete-package-locally-nicknames-others ("LOCALLY-NICKNAMES-OTHERS" "LOCALLY-NICKNAMED-BY-OTHERS")
