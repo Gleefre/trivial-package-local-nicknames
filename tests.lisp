@@ -4,7 +4,6 @@
 (named-readtables:in-readtable trivial-package-lockal-nicknames.test)
 
 (define-test test-package-local-nicknames-introspection ()
-  (reset-test-packages)
   (dolist (p '("KEYWORD" "COMMON-LISP" "COMMON-LISP-USER" #!:1 #!:2))
     (let ((*package* (find-package p)))
       (let ((alist (package-local-nicknames #!:1)))
@@ -14,7 +13,6 @@
         (assert (eql 2 (length alist)))))))
 
 (define-test test-package-local-nicknames-symbol-equality ()
-  (reset-test-packages)
   (let ((*package* (find-package #!:1)))
     (let ((cons0 (read-from-string "L:CONS"))
           (cons1 (find-symbol "CONS" :l))
@@ -28,7 +26,6 @@
       (assert (eq +sym+ exit1)))))
 
 (define-test test-package-local-nicknames-package-equality ()
-  (reset-test-packages)
   (let ((*package* (find-package #!:1)))
     (let ((cl (find-package :l))
           (cls (find-package #\L))
@@ -38,7 +35,6 @@
       (assert (eq sb (find-package '#!#:T))))))
 
 (define-test test-package-local-nicknames-symbol-printing ()
-  (reset-test-packages)
   (let ((*package* (find-package #!:1)))
     (let ((cons0 (read-from-string "L:CONS"))
           (exit0 (read-from-string +sym-fullname+)))
@@ -46,7 +42,6 @@
       (assert (equal +sym-fullnickname+ (prin1-to-string exit0))))))
 
 (define-test test-package-local-nicknames-nickname-collision ()
-  (reset-test-packages)
   ;; Can't add same name twice for different global names.
   (errors package-error
     (add-package-local-nickname :l #!:2 #!:1))
@@ -55,7 +50,6 @@
   (add-package-local-nickname #\L :cl #!:1))
 
 (define-test test-package-local-nicknames-nickname-removal ()
-  (reset-test-packages)
   (assert (= 2 (length (package-local-nicknames #!:1))))
   (assert (remove-package-local-nickname :l #!:1))
   (assert (= 1 (length (package-local-nicknames #!:1))))
@@ -63,8 +57,6 @@
     (assert (not (find-package :l)))))
 
 (define-test test-package-local-nicknames-nickname-removal-char ()
-  (declare (optimize (debug 3) (speed 0)))
-  (reset-test-packages)
   (assert (= 2 (length (package-local-nicknames #!:1))))
   (assert (remove-package-local-nickname #\L #!:1))
   (assert (= 1 (length (package-local-nicknames #!:1))))
@@ -72,7 +64,6 @@
     (assert (not (find-package :l)))))
 
 (define-test test-package-local-nicknames-nickname-removal-remaining ()
-  (reset-test-packages)
   (remove-package-local-nickname :l #!:1)
   (let ((*package* (find-package #!:1)))
     (let ((exit0 (read-from-string +sym-fullname+))
@@ -84,7 +75,6 @@
       (assert (eq sb (find-package '#!#:T))))))
 
 (define-test test-package-local-nicknames-nickname-removal-readd-another-symbol-equality ()
-  (reset-test-packages)
   (assert (remove-package-local-nickname :l #!:1))
   (assert (eq (find-package #!:1)
               (add-package-local-nickname :l #!:2 #!:1)))
@@ -101,7 +91,6 @@
       (assert (eq +sym+ exit1)))))
 
 (define-test test-package-local-nicknames-nickname-removal-readd-another-package-equality ()
-  (reset-test-packages)
   (assert (remove-package-local-nickname :l #!:1))
   (assert (eq (find-package #!:1)
               (add-package-local-nickname :l #!:2 #!:1)))
@@ -112,7 +101,6 @@
       (assert (eq sb (find-package '#!#:T))))))
 
 (define-test test-package-local-nicknames-nickname-removal-readd-another-symbol-printing ()
-  (reset-test-packages)
   (assert (remove-package-local-nickname :l #!:1))
   (assert (eq (find-package #!:1)
               (add-package-local-nickname :l #!:2 #!:1)))
@@ -125,7 +113,6 @@
 #+sbcl
 (define-test test-package-local-nicknames-package-locks ()
   ;; TODO Support for other implementations with package locks.
-  (reset-test-packages)
   (progn
     (sb-ext:lock-package #!:1)
     (errors sb-ext:package-lock-violation

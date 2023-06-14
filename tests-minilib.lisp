@@ -43,7 +43,10 @@
 (defmacro define-test (name (&rest options) &body body)
   (declare (ignorable options))
   `(progn
-     (defun ,name () ,@body)
+     (defun ,name ()
+       (declare (optimize (debug 3) (safety 3) (speed 0)))
+       (reset-test-packages)
+       ,@body)
      (add-test ',name)
      ',name))
 
