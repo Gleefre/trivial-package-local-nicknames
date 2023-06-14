@@ -25,7 +25,7 @@
   (:export #:x))
 
 (progn
-  (defparameter +nn-name+ '#:t)
+  (defparameter +nn-name+ '#?N)
   (defparameter +sym-name+ '#:x)
 
   (defparameter +nn-sname+ (string +nn-name+))
