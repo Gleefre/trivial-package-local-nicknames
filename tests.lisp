@@ -25,11 +25,9 @@
   (:export #:x))
 
 (progn
-  (defparameter +test-data+ '(#?T #:t #:x))
-
-  (defparameter +pkg-name+ (first +test-data+))
-  (defparameter +nn-name+ (second +test-data+))
-  (defparameter +sym-name+ (third +test-data+))
+  (defparameter +pkg-name+ '#?T)
+  (defparameter +nn-name+ '#:t)
+  (defparameter +sym-name+ '#:x)
 
   (defparameter +pkg-sname+ (string +pkg-name+))
   (defparameter +nn-sname+ (string +nn-name+))
