@@ -51,3 +51,28 @@
       (:use)
       (:local-nicknames (#:nick #!#:test)
                         (#:nick #!#:test/2)))))
+
+(define-test defpackage-same-target (#!#:a #!#:b)
+  (defpackage #!#:a
+    (:use)
+    (:local-nicknames (#:nick/1 #!#:test)
+                      (#:nick/2 #!#:test)))
+  (assert-local-nicknames #!#:a (#:nick/1 #!#:test) (#:nick/2 #!#:test))
+  (defpackage #!#:a
+    (:use)
+    (:local-nicknames (#:nick/1 #!#:test)
+                      (#:nick/2 #!#:test))
+    (:local-nicknames (#:nick/1 #!"TEST")
+                      (#:nick/3 #!#:test))
+    (:local-nicknames (#:nick/3 #!#:test)
+                      (#:nick/5 #!"TEST")
+                      (#:nick/1 #!#:test))
+    (:local-nicknames ("NICK/3" #!#:test)
+                      ("NICK/4" #!"TEST")
+                      ("NICK/2" #!#:test)))
+  (assert-local-nicknames #!#:a
+                          (#:nick/1 #!#:test)
+                          (#:nick/2 #!#:test)
+                          (#:nick/3 #!#:test)
+                          (#:nick/4 #!#:test)
+                          (#:nick/5 #!#:test)))
