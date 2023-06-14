@@ -14,7 +14,9 @@
   :author "Michał \"phoe\" Herda <phoe@disroot.org>"
   :license  "Public domain"
   :version "0.2"
-  :depends-on ("trivial-package-local-nicknames")
+  :depends-on ("trivial-package-local-nicknames"
+               "trivial-package-locks"
+               "named-readtables")
   :serial t
   :components ((:file "tests"))
   :perform (asdf:test-op (op c) (uiop:symbol-call '#:trivial-package-local-nicknames.test '#:run)))
