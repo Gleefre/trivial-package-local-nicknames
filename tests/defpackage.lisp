@@ -81,7 +81,7 @@
                       (#:nick #!#:test/global-nick)))
   (assert-local-nicknames #!#:e (#:nick #!#:test)))
 
-(define-test defpackage-same-target (#!#:a #!#:b)
+(define-test defpackage-same-target (#!#:a #!#:b #!#:c)
   ;; It is ok to have nicknames for same packages
   (defpackage #!#:a
     (:use)
@@ -89,8 +89,19 @@
                       (#:nick/2 #!#:test)))
   (assert-local-nicknames #!#:a (#:nick/1 #!#:test) (#:nick/2 #!#:test))
 
-  ;; Just big test with different nicknames in different form
+  ;; It is ok to have nicknames for same packages and its nicknames
   (defpackage #!#:b
+    (:use)
+    (:local-nicknames (#:nick/1 #!#:test)
+                      (#:nick/2 #!#:test)
+                      (#:nick/3 #!#:test/global-nick)))
+  (assert-local-nicknames #!#:b
+                          (#:nick/1 #!#:test)
+                          (#:nick/2 #!#:test)
+                          (#:nick/3 #!#:test))
+
+  ;; Just big test with different nicknames in different form
+  (defpackage #!#:c
     (:use)
     (:local-nicknames (#:nick/1 #!#:test)
                       (#:nick/2 #!#:test))
@@ -105,7 +116,7 @@
                       ("N"      #!#:test)
                       ("NICK/4" #!"TEST")
                       ("NICK/2" #!#:test)))
-  (assert-local-nicknames #!#:b
+  (assert-local-nicknames #!#:c
                           (#:nick/1 #!#:test)
                           (#:nick/2 #!#:test)
                           (#:nick/3 #!#:test)
