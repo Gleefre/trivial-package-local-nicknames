@@ -28,10 +28,9 @@
   (defparameter +nn-name+ '#:t)
   (defparameter +sym-name+ '#:x)
 
-  (defparameter +pkg-sname+ #!T)
   (defparameter +nn-sname+ (string +nn-name+))
   (defparameter +sym-sname+ (string +sym-name+))
-  (defparameter +sym-fullname+ (concatenate 'string +pkg-sname+ ":" +sym-sname+))
+  (defparameter +sym-fullname+ (concatenate 'string #!T ":" +sym-sname+))
   (defparameter +sym-fullnickname+ (concatenate 'string +nn-sname+ ":" +sym-sname+))
   (defparameter +sym+ (or (find-symbol +sym-sname+ '#?T)
                           (error "Symbol not found while loading tests: check +SYM+ binding."))))
@@ -95,7 +94,7 @@
     (let ((*package* (find-package p)))
       (let ((alist (package-local-nicknames #!1)))
         (assert (equal (cons "L" (find-package "CL")) (assoc "L" alist :test 'string=)))
-        (assert (equal (cons +nn-sname+ (find-package +pkg-sname+))
+        (assert (equal (cons +nn-sname+ (find-package #!T))
                        (assoc +nn-sname+ alist :test 'string=)))
         (assert (eql 2 (length alist)))))))
 
