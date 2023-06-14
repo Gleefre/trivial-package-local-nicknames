@@ -33,15 +33,21 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defvar *tests* '()))
 
+(defun add-test (function)
+  (pushnew function *tests*))
+
+(defun get-tests ()
+  (reverse *tests*))
+
 (defmacro define-test (name &body body)
   `(progn
      (defun ,name () ,@body)
-     (pushnew ',name *tests*)
+     (add-test ',name)
      ',name))
 
 (defun run (&optional (ignore-errors t))
   (let ((errors '()))
-    (dolist (test *tests*)
+    (dolist (test (get-tests))
       (if ignore-errors
           (handler-case (funcall test)
             (error (e)
