@@ -70,7 +70,7 @@
                       (#:n      #!#:test))
     (:local-nicknames (#:nick/3 #!#:test)
                       (#:nick/5 #!"TEST")
-                      (#\n      #!"TEST")
+                      (#\N      #!"TEST")
                       (#:nick/1 #!#:test))
     (:local-nicknames ("NICK/3" #!#:test)
                       ("N"      #!#:test)
