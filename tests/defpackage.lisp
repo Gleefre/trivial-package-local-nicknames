@@ -28,6 +28,22 @@
     (:local-nicknames (#:nick #!#:test/global-nick)))
   (assert-local-nicknames #!#:d (#:nick #!#:test)))
 
+(define-test defpackage-nonexistent-target (#!#:a #!#:b #!#:c)
+  ;; should signal error of type package-error
+  (errors package-error
+    (defpackage #!#:a
+      (:use)
+      (:local-nicknames (#:nick #!#:test/this/package/does/not/exist))))
+  (errors package-error
+    (defpackage #!#:b
+      (:use)
+      (:local-nicknames (#:nick #!#:test/this/package/does/not/exist)
+                        ("NICK" #!#:test/this/package/does/not/exist))))
+  (errors package-error
+    (defpackage #!#:c
+      (:use)
+      (:local-nicknames (#\N #!#:test/this/package/does/not/exist)))))
+
 (define-test defpackage-same-nick (#!#:a #!#:b #!#:c #!#:d #!#:e)
   ;; same nickname for the same package is fine
   ;; should not be repeated in (package-local-nicknames ...) alist
