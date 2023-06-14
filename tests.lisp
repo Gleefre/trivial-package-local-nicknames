@@ -1,7 +1,7 @@
-(defpackage #:trivial-package-local-nicknames-tests
+(defpackage #:trivial-package-local-nicknames.test
   (:use #:cl #:trivial-package-local-nicknames))
 
-(in-package #:trivial-package-local-nicknames-tests)
+(in-package #:trivial-package-local-nicknames.test)
 
 ;;; Test data
 
