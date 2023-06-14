@@ -58,7 +58,7 @@
     (:local-nicknames (#:nick/1 #!#:test)
                       (#:nick/2 #!#:test)))
   (assert-local-nicknames #!#:a (#:nick/1 #!#:test) (#:nick/2 #!#:test))
-  (defpackage #!#:a
+  (defpackage #!#:b
     (:use)
     (:local-nicknames (#:nick/1 #!#:test)
                       (#:nick/2 #!#:test))
@@ -70,7 +70,7 @@
     (:local-nicknames ("NICK/3" #!#:test)
                       ("NICK/4" #!"TEST")
                       ("NICK/2" #!#:test)))
-  (assert-local-nicknames #!#:a
+  (assert-local-nicknames #!#:b
                           (#:nick/1 #!#:test)
                           (#:nick/2 #!#:test)
                           (#:nick/3 #!#:test)
