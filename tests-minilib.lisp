@@ -54,17 +54,15 @@
               (assert (eq (cdr (assoc nick nicknames :test #'string=))
                           package)))))
 
-(defmacro define-test (name (&rest packages-to-remove/names) &body body)
+(defmacro define-test (name (&rest packages-to-cleanup) &body body)
   `(progn
      (defun ,name ()
        (declare (optimize (debug 3) (safety 3) (speed 0)))
        (reset-test-packages)
        (unwind-protect
-            (progn ,@body)
-         (reset-test-packages)
-         ,@(loop for package in packages-to-remove/names
-                 collect `(when (find-package ',package)
-                            (delete-package ',package)))))
+            (with-packages-cleanup (,@packages-to-cleanup)
+              ,@body)
+         (reset-test-packages)))
      (add-test ',name)
      ',name))
 
@@ -80,6 +78,13 @@
     (format t ";;~%;; ~D tests run, ~D failures."
             (length *tests*) (length errors))
     (null errors)))
+
+(defmacro with-packages-cleanup (packages-to-cleanup &body body)
+  `(unwind-protect
+        (progn ,@body)
+     ,@(loop for package in packages-to-cleanup
+             collect `(when (find-package ',package)
+                        (delete-package ',package)))))
 
 #+(or)
 (defmacro with-tmp-packages (bindings &body body)
