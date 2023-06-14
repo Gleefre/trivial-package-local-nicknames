@@ -18,7 +18,6 @@
     (:local-nicknames (#:l #:cl) (#:nick #!#:test)))
   (defpackage #!#:test-2
     (:use)
-    (:export "CONS"))
-  (defparameter *sym* (find-symbol "SYM" '#!#:test)))
+    (:export "CONS")))
 
 (reset-test-packages)

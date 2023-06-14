@@ -22,8 +22,8 @@
       (assert (eq 'cons cons0))
       (assert (eq 'cons cons1))
       (assert (eq 'cons cons1s))
-      (assert (eq *sym* exit0))
-      (assert (eq *sym* exit1)))))
+      (assert (eq (find-symbol "SYM" '#!#:test) exit0))
+      (assert (eq (find-symbol "SYM" '#!#:test) exit1)))))
 
 (define-test test-package-local-nicknames-package-equality ()
   (let ((*package* (find-package #! :test-1)))
@@ -69,8 +69,8 @@
     (let ((exit0 (read-from-string #!"TEST:SYM"))
           (exit1 (find-symbol "SYM" '#:nick))
           (sb (find-package '#:nick)))
-      (assert (eq *sym* exit0))
-      (assert (eq *sym* exit1))
+      (assert (eq (find-symbol "SYM" '#!#:test) exit0))
+      (assert (eq (find-symbol "SYM" '#!#:test) exit1))
       (assert (equal "NICK:SYM" (prin1-to-string exit0)))
       (assert (eq sb (find-package '#!#:TEST))))))
 
@@ -87,8 +87,8 @@
       (assert (not (eq 'cons cons0)))
       (assert (eq (find-symbol "CONS" #! :test-2)
                   cons0))
-      (assert (eq *sym* exit0))
-      (assert (eq *sym* exit1)))))
+      (assert (eq (find-symbol "SYM" '#!#:test) exit0))
+      (assert (eq (find-symbol "SYM" '#!#:test) exit1)))))
 
 (define-test test-package-local-nicknames-nickname-removal-readd-another-package-equality ()
   (assert (remove-package-local-nickname :l #! :test-1))
