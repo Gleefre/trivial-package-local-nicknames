@@ -12,14 +12,13 @@
         (string (concatenate 'string
                              "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST."
                              token))
-        (symbol (if (eq (symbol-package token) (find-package '#:keyword))
-                    (nth-value 0 (intern (concatenate 'string
+        (keyword (nth-value 0 (intern (concatenate 'string
                                                       "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST."
                                                       (symbol-name token))
-                                         (symbol-package token)))
-                    (make-symbol (concatenate 'string
-                                              "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST."
-                                              (symbol-name token))))))))
+                                         (symbol-package token))))
+        (symbol (make-symbol (concatenate 'string
+                                          "TRIVIAL-PACKAGE-LOCAL-NICKNAMES.TEST."
+                                          (symbol-name token)))))))
 
 (named-readtables:defreadtable trivial-package-lockal-nicknames.test
   (:merge :standard)
